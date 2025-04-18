@@ -98,4 +98,61 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  .rupee-format::before {
+    content: "₹";
+    margin-right: 0.25rem;
+  }
+  
+  .transaction-card {
+    @apply relative overflow-hidden transition-all duration-300 hover:shadow-md;
+  }
+  
+  .income-card {
+    @apply border-l-4 border-income bg-income-muted;
+  }
+  
+  .expense-card {
+    @apply border-l-4 border-expense bg-expense-muted;
+  }
+  
+  .budget-progress {
+    @apply h-2 rounded-full bg-gray-200 overflow-hidden;
+  }
+  
+  .budget-progress-bar {
+    @apply h-full rounded-full transition-all duration-300;
+  }
+  
+  .budget-safe {
+    @apply bg-income;
+  }
+  
+  .budget-warning {
+    @apply bg-yellow-500;
+  }
+  
+  .budget-danger {
+    @apply bg-expense;
+  }
+  
+  .stat-card {
+    @apply flex items-center gap-3 p-4 rounded-lg border;
+  }
+  
+  .stat-icon {
+    @apply p-2 rounded-full;
+  }
+  
+  .income-icon {
+    @apply bg-income-light text-income;
+  }
+  
+  .expense-icon {
+    @apply bg-expense-light text-expense;
+  }
+  
+  .budget-icon {
+    @apply bg-budget-light text-budget;
+  }
 }

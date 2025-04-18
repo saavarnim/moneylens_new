@@ -61,6 +61,21 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				income: {
+					DEFAULT: '#38A169',
+					light: '#C6F6D5',
+					muted: '#31986233'
+				},
+				expense: {
+					DEFAULT: '#E53E3E',
+					light: '#FED7D7',
+					muted: '#E53E3E33'
+				},
+				budget: {
+					DEFAULT: '#4299E1',
+					light: '#BEE3F8',
+					muted: '#4299E133'
 				}
 			},
 			borderRadius: {
