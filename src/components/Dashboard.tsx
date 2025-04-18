@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { formatRupee } from "@/utils/format";
 import { calculateStats, initializeStorage } from "@/utils/storage";
-import { ArrowUpCircle, ArrowDownCircle, Wallet, TrendingUp, TrendingDown, IndianRupee } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, Wallet, LogOut, IndianRupee } from "lucide-react";
 import { TransactionForm } from "./TransactionForm";
 import { BudgetForm } from "./BudgetForm";
 import { TransactionList } from "./TransactionList";
@@ -12,6 +13,7 @@ import { BudgetList } from "./BudgetList";
 import { FinanceCharts } from "./FinanceCharts";
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"transactions" | "budgets" | "insights">("transactions");
   const [stats, setStats] = useState({
     totalIncome: 0,
@@ -19,12 +21,10 @@ export function Dashboard() {
     balance: 0,
   });
 
-  // Initialize storage on component mount
   useEffect(() => {
     initializeStorage();
   }, []);
 
-  // Load stats
   useEffect(() => {
     const loadStats = () => {
       try {
@@ -41,25 +41,38 @@ export function Dashboard() {
 
     loadStats();
     
-    // Set up an interval to refresh the stats every 5 seconds
     const intervalId = setInterval(loadStats, 5000);
     
     return () => clearInterval(intervalId);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    navigate('/');
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex flex-col gap-2 mb-6">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <IndianRupee className="h-6 w-6" />
-          MoneyLens
-        </h1>
-        <p className="text-muted-foreground">
-          Personal Finance Dashboard
-        </p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <IndianRupee className="h-6 w-6" />
+            MoneyLens
+          </h1>
+          <p className="text-muted-foreground">
+            Personal Finance Dashboard
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={handleLogout}
+          className="flex items-center gap-2"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card className="bg-income-muted">
           <CardContent className="flex items-center justify-between p-4">
