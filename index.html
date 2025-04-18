@@ -1,26 +1,334 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>rupee-wise-dashboard</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
-
-    <meta property="og:title" content="rupee-wise-dashboard" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <title>MoneyLens - Personal Finance Dashboard</title>
+    <meta name="description" content="Track your personal finances with MoneyLens" />
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
-
   <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
+    <div class="container">
+      <header>
+        <div class="app-title">
+          <i class="fa-solid fa-rupee-sign"></i>
+          <h1>MoneyLens</h1>
+        </div>
+        <p class="app-subtitle">Personal Finance Dashboard</p>
+      </header>
+
+      <!-- Stats Cards -->
+      <div class="stats-container">
+        <div class="stat-card income-card">
+          <div class="stat-info">
+            <p class="stat-label">Total Income</p>
+            <h3 class="stat-value" id="total-income">₹0</h3>
+          </div>
+          <div class="stat-icon">
+            <i class="fa-solid fa-arrow-up-right-dots"></i>
+          </div>
+        </div>
+        
+        <div class="stat-card expense-card">
+          <div class="stat-info">
+            <p class="stat-label">Total Expenses</p>
+            <h3 class="stat-value" id="total-expense">₹0</h3>
+          </div>
+          <div class="stat-icon">
+            <i class="fa-solid fa-arrow-down-right-dots"></i>
+          </div>
+        </div>
+        
+        <div class="stat-card balance-card" id="balance-card">
+          <div class="stat-info">
+            <p class="stat-label">Net Balance</p>
+            <h3 class="stat-value" id="net-balance">₹0</h3>
+          </div>
+          <div class="stat-icon">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab" data-tab="transactions">Transactions</div>
+        <div class="tab" data-tab="budgets">Budgets</div>
+        <div class="tab" data-tab="insights">Insights</div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Transactions Tab -->
+        <div class="tab-pane" id="transactions-tab">
+          <div class="content-grid">
+            <div class="form-section">
+              <div class="card">
+                <div class="card-header">
+                  <h2>Add Transaction</h2>
+                </div>
+                <div class="card-body">
+                  <form id="transaction-form">
+                    <div class="form-group">
+                      <label>Transaction Type</label>
+                      <div class="radio-group">
+                        <label class="radio">
+                          <input type="radio" name="transaction-type" value="income" checked>
+                          <span class="radio-label income-text">Income</span>
+                        </label>
+                        <label class="radio">
+                          <input type="radio" name="transaction-type" value="expense">
+                          <span class="radio-label expense-text">Expense</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="category-header">
+                        <label for="category">Category</label>
+                        <button type="button" id="add-category-btn" class="small-button">
+                          <i class="fa-solid fa-plus"></i> Add New
+                        </button>
+                      </div>
+                      <select id="category" required>
+                        <option value="" disabled selected>Select a category</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="amount">Amount (₹)</label>
+                      <div class="input-with-icon">
+                        <i class="fa-solid fa-rupee-sign"></i>
+                        <input type="number" id="amount" min="0" placeholder="0" required>
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="time">Time</label>
+                        <input type="time" id="time" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="description">Description (Optional)</label>
+                      <textarea id="description" placeholder="Add notes about this transaction..."></textarea>
+                    </div>
+
+                    <button type="submit" class="primary-button full-width">Add Transaction</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="list-section">
+              <div class="card">
+                <div class="card-header">
+                  <h2>Transaction History</h2>
+                </div>
+                <div class="transaction-filter">
+                  <div class="filter-tabs">
+                    <div class="filter-tab active" data-filter="all">All</div>
+                    <div class="filter-tab" data-filter="income">Income</div>
+                    <div class="filter-tab" data-filter="expense">Expenses</div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div id="transaction-list" class="transaction-list">
+                    <div class="empty-state">
+                      <p>No transactions found.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budgets Tab -->
+        <div class="tab-pane" id="budgets-tab">
+          <div class="content-grid">
+            <div class="form-section">
+              <div class="card">
+                <div class="card-header">
+                  <h2>Set Monthly Budget</h2>
+                </div>
+                <div class="card-body">
+                  <form id="budget-form">
+                    <div class="form-group">
+                      <label for="budget-category">Category</label>
+                      <select id="budget-category" required>
+                        <option value="" disabled selected>Select a category</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="budget-amount">Monthly Budget Amount (₹)</label>
+                      <div class="input-with-icon">
+                        <i class="fa-solid fa-rupee-sign"></i>
+                        <input type="number" id="budget-amount" min="0" placeholder="0" required>
+                      </div>
+                    </div>
+
+                    <button type="submit" class="primary-button full-width">Save Budget</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="list-section">
+              <div class="card">
+                <div class="card-header">
+                  <h2>Monthly Budgets</h2>
+                </div>
+                <div class="card-body">
+                  <div id="budget-list" class="budget-list">
+                    <div class="empty-state">
+                      <p>No budgets set. Add a budget to track your spending.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insights Tab -->
+        <div class="tab-pane" id="insights-tab">
+          <div class="card">
+            <div class="card-header">
+              <h2>Financial Overview</h2>
+            </div>
+            <div class="insight-tabs">
+              <div class="insight-tab active" data-insight="expense">Expense Analysis</div>
+              <div class="insight-tab" data-insight="income">Income Analysis</div>
+            </div>
+            <div class="card-body">
+              <div class="insight-content" id="expense-insight">
+                <div class="chart-container">
+                  <canvas id="expense-chart"></canvas>
+                </div>
+                <div class="stats-breakdown">
+                  <h3>Expense Breakdown</h3>
+                  <div id="expense-breakdown" class="breakdown-list">
+                    <div class="empty-state">
+                      <p>No expense data to display.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="insight-content" id="income-insight" style="display: none;">
+                <div class="chart-container">
+                  <canvas id="income-chart"></canvas>
+                </div>
+                <div class="stats-breakdown">
+                  <h3>Income Breakdown</h3>
+                  <div id="income-breakdown" class="breakdown-list">
+                    <div class="empty-state">
+                      <p>No income data to display.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="category-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-title">Add New Category</h2>
+          <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+          <form id="category-form">
+            <div class="form-group">
+              <label for="category-type">Category Type</label>
+              <div class="radio-group">
+                <label class="radio">
+                  <input type="radio" name="category-type" value="income" checked>
+                  <span class="radio-label income-text">Income</span>
+                </label>
+                <label class="radio">
+                  <input type="radio" name="category-type" value="expense">
+                  <span class="radio-label expense-text">Expense</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="category-name">Category Name</label>
+              <input type="text" id="category-name" placeholder="Enter category name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="category-icon">Icon</label>
+              <select id="category-icon" required>
+                <option value="fa-rupee-sign">Rupee</option>
+                <option value="fa-wallet">Wallet</option>
+                <option value="fa-credit-card">Credit Card</option>
+                <option value="fa-landmark">Bank</option>
+                <option value="fa-briefcase">Work</option>
+                <option value="fa-shopping-bag">Shopping</option>
+                <option value="fa-home">Home</option>
+                <option value="fa-car">Transport</option>
+                <option value="fa-utensils">Food</option>
+                <option value="fa-heartbeat">Health</option>
+                <option value="fa-tshirt">Clothing</option>
+                <option value="fa-dumbbell">Fitness</option>
+                <option value="fa-gamepad">Entertainment</option>
+                <option value="fa-graduation-cap">Education</option>
+                <option value="fa-gift">Gift</option>
+                <option value="fa-mobile-alt">Phone</option>
+                <option value="fa-wifi">Internet</option>
+                <option value="fa-chart-line">Investment</option>
+              </select>
+            </div>
+            
+            <button type="submit" class="primary-button full-width">Add Category</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <div class="toast-content">
+        <div class="toast-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="toast-message">
+          <span id="toast-title">Success</span>
+          <span id="toast-description">Operation completed successfully</span>
+        </div>
+      </div>
+      <div class="toast-progress"></div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
